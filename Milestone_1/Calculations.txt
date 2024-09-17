@@ -1,0 +1,21 @@
+Line rate = 1 Gigab\s = 1 Megab\ms = 1 kbit\us = 125 byte\us
+
+Capture size = 10 ms = 10000 us --> its Can capture (1000 bit\us * 10000 us ) = 10 Megabit = 1.25 Megabyte
+
+Time to send all capture size = 1.25 Megabytes  / 125 byte/us = 10000 us
+
+Assume burst periodicty = 100 us and no. of packets per burst = 5
+
+Ethernet packet time = 1526*8 bits \ 1 kbit\us = 12.2 us
+
+so every burst must send 5 packets in  61 us, so the rest of 100 us will be IFGs
+
+So, number of bursts = Time to send all capture size / burst periodicity = 10000/100 = 100 bursts
+
+IFG_interval_us = BurstPeriodicity_us - (packet_time_us * BurstSize)
+
+IFG bytes = (LineRate/8000000) * ifg_interval_us 
+
+So Capture size for payload = 1.25 Megabyte - IFG bytes * no_bursts
+
+
