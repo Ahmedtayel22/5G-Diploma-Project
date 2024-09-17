@@ -246,7 +246,7 @@ int main() {
     int index = 0;
     int packetCount = 0;
     float countBursts = 0;
-    std::vector<uint8_t> payloadBytes((CaptureSize_payloadBytes), 0xab); 
+    std::vector<uint8_t> payloadBytes((CaptureSize_payloadBytes), 0x00); 
     while (countBursts != noOfbursts ) { 
         for (size_t i = 0; i < BurstSize; ++i) {
             std::vector<uint8_t> packetBytes (payloadBytes.begin() + index, payloadBytes.begin() + index + 1500);
