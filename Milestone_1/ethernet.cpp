@@ -11,6 +11,7 @@
 #include <cmath>
 
 
+
 /*##############################################
 IMPORTANT NOTES: 
 [1] Use my config.txt with your desired values NOT param.text file.
@@ -24,7 +25,6 @@ IMPORTANT NOTES:
 /*##########################################
 ############ IFGs Generation ###############
 ##########################################*/
-
 void sendIFGsOneByteAtATime(int no_ifgs) {
     const std::vector<uint8_t> ifgBytes = {0x07, 0x07, 0x07, 0x07};
     size_t bytesDisplayed = 0;
@@ -235,13 +235,26 @@ int main() {
     float CaptureSize_us = CaptureSize_ms * 1000;
     size_t CaptureSize_totalBytes = std::ceil ((CaptureSize_us * (LineRate / 1000000)) / 8 );
     size_t noOfbursts = (CaptureSize_us)/BurstPeriodicity_us;
-    float packet_time_us =  ((1526*8) / (LineRate / 1000000));
+    float packet_time_us =  ((1512*8) / (LineRate / 1000000));
     float ifg_interval_us =  (BurstPeriodicity_us - (packet_time_us * BurstSize));
     size_t ifgsBytes_perBurst = std::ceil((LineRate/8000000) * ifg_interval_us);
     size_t ifgsBytes_total = std::ceil(ifgsBytes_perBurst*noOfbursts);
     size_t CaptureSize_packetsBytes = std::ceil (CaptureSize_totalBytes - ifgsBytes_total);
-    size_t total_packets = std::ceil (CaptureSize_packetsBytes / 1526);
-    size_t CaptureSize_payloadBytes = std::ceil (total_packets*1500);
+    size_t total_packets = std::ceil (CaptureSize_packetsBytes / 1512);
+    size_t CaptureSize_payloadBytes = std::ceil (total_packets*(1500-26));
+
+
+/*
+    std::cout << packet_time_us << std::endl ;
+    std::cout << ifg_interval_us << std::endl ;
+    std::cout << CaptureSize_packetsBytes << std::endl ;
+    std::cout << CaptureSize_payloadBytes << std::endl ;
+    std::cout << total_packets << std::endl ;
+    std::cout << ifgsBytes_total << std::endl ;
+    std::cout << noOfbursts << std::endl ;
+
+*/
+
 
     int index = 0;
     int packetCount = 0;
@@ -249,12 +262,12 @@ int main() {
     std::vector<uint8_t> payloadBytes((CaptureSize_payloadBytes), 0x00); 
     while (countBursts != noOfbursts ) { 
         for (size_t i = 0; i < BurstSize; ++i) {
-            std::vector<uint8_t> packetBytes (payloadBytes.begin() + index, payloadBytes.begin() + index + 1500);
+            std::vector<uint8_t> packetBytes (payloadBytes.begin() + index, payloadBytes.begin() + index + 1474);
             // Construct and display the frame
             std::cout << std::dec << "Constructing and displaying Packet " << (packetCount + 1) << ":" << std::endl;
             constructAndDisplayFrame(preamble, sfd, destMacBytes, srcMacBytes, etherTypeBytes, packetBytes);
             ++packetCount;
-            index = index + 1500;
+            index = index + 1474;
                 }
             
             countBursts = countBursts + 1;
@@ -262,10 +275,12 @@ int main() {
         std::cout << "Sending IFG bytes withing the silet interval " << std::dec << ifg_interval_us << " microseconds..." << std::endl;
 
         sendIFGsOneByteAtATime(ifgsBytes_perBurst);
+
     }
 
     std::cout.rdbuf(coutbuf);
     outFile.close();
 
+    
     return 0;
 }
