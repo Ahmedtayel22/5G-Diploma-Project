@@ -1,0 +1,20 @@
+1000000000
+10
+4
+010101010101
+333333333333
+1474
+15
+10
+10
+
+
+// LineRate
+// CaptureSizems
+// MinNumOfIFGsPerPacket
+// DestAddress
+// SourceAddress
+// MaxPacketSize
+// SC
+// MaxNrb
+// NrbPerPacket
